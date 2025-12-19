@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>선물 추첨</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "SUIT Light";
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      /* ✅ 메인페이지 배경 이미지 추가 */
+      background-image: url("https://postfiles.pstatic.net/MjAyNTEyMTlfMTAx/MDAxNzY2MTA3NDQxMDY2.6PlUJbqdLL4qBjDDQLfmZoISJY8CU2f9ZaIxpBDy-mYg.OexJU6XTNgEJ3mJ7r1mw0mPPRBb_TAGiqKHAzSOxd2gg.JPEG/900%EF%BC%BF%ED%96%89%EC%82%AC1.jpg?type=w773");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    #word-container {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 10px;
+      width: 80%;
+      height: 55vh;
+    }
+
+    .word-btn {
+      font-size: 70px;
+      border: 5px solid #ff9f9f;
+      border-radius: 8px;
+      background-color: #fceeee;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      height: 100%;
+    }
+
+    .word-btn:hover {
+      background-color: #e0e0e0;
+    }
+
+    .word-btn.selected {
+      background-color: #ccc;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    #result {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 80%;
+      margin-top: 20px;
+      background-color: rgba(255, 255, 255, 0.6);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .result-column {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .result-column p {
+      margin: 5px 0;
+      font-size: 18px;
+    }
+
+    #prize-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #fff;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 10;
+    }
+
+    #prize-screen img {
+      width: 38%;
+      height: auto;
+      object-fit: contain;
+      margin-bottom: 20px;
+    }
+
+    #prize-name {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
+    #back-btn {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    #back-btn:hover {
+      background-color: #0056b3;
+    }
+
+@font-face {
+  font-family: 'SchoolSafetyStarrySky';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimByeolbichhaneulTTF-B.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;}
+h1 {
+  font-family: 'SchoolSafetyStarrySky';, sans-serif;
+  color: #b00000; /* ✅ 글자 색상 변경 */
+  font-size: 60px; /* ✅ 글자 크기 조정 */
+  margin-bottom: 20px;
+}
+
+  </style>
+</head>
+<body>
+  <h1>선물 추첨</h1>
+
+  <div id="word-container">
+    <button class="word-btn">1</button>
+    <button class="word-btn">2</button>
+    <button class="word-btn">3</button>
+    <button class="word-btn">4</button>
+    <button class="word-btn">5</button>
+    <button class="word-btn">6</button>
+    <button class="word-btn">7</button>
+    <button class="word-btn">8</button>
+    <button class="word-btn">9</button>
+    <button class="word-btn">10</button>
+  </div>
+
+  <div id="result">
+    <div id="left-result" class="result-column"></div>
+    <div id="right-result" class="result-column"></div>
+  </div>
+
+  <div id="prize-screen">
+    <img id="prize-img" src="" alt="상품 이미지" />
+    <div id="prize-name"></div>
+    <button id="back-btn">뒤로가기</button>
+  </div>
+
+  <script>
+    const prizes = [
+      { name: "발렌타인 17년산", 
+        img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20160907_6%2Fkajakajamall_14732544884842GFcj_JPEG%2Ff27c569e16b77820ebccddf01d437722.jpg&type=sc960_832" ,
+       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "키보드+마우스세트", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20250905_242%2F1757037880895MB1Xv_JPEG%2F91170714384164205_71932136.jpg&type=sc960_832",
+       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "키보드+마우스세트", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20250905_242%2F1757037880895MB1Xv_JPEG%2F91170714384164205_71932136.jpg&type=sc960_832" ,
+       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "HAZZYS 머플러(캐시미어)", img: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fthumbnail.coupangcdn.com%2Fthumbnails%2Fremote%2F492x492ex%2Fimage%2Fvendor_inventory%2F0af2%2F44c25b1ef52c9b91199180e8d2a131e45a4236bc91e7da8caeb7c82b5245.jpg&type=sc960_832" ,
+       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "차이슨 헤어드라이기", img: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fthumbnail.coupangcdn.com%2Fthumbnails%2Fremote%2F492x492ex%2Fimage%2Fvendor_inventory%2F18d2%2Fa933c098e9d4880e2111eeda7f3e425632dd60b91786f8ad11d9b03718f8.png&type=sc960_832" ,
+       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "모니터받침대", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20191105_7%2F15729336846896Dc29_JPEG%2F10293519239915906_548408706.jpg&type=sc960_832" ,
+       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "모니터받침대", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20191105_7%2F15729336846896Dc29_JPEG%2F10293519239915906_548408706.jpg&type=sc960_832" ,
+       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "다기능 충전기(3in1)", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20251104_18%2F1762232006253VWjVP_JPEG%2F77240500281315946_1096520776.jpg&type=sc960_832" ,
+       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "다기능 충전기(3in1)", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20251104_18%2F1762232006253VWjVP_JPEG%2F77240500281315946_1096520776.jpg&type=sc960_832" ,
+       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "닥터바르미 경추베개", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTA0MDhfMjE1%2FMDAxNjE3ODkzOTk1NjE3.X9jhuskgVDdOljS16fwIR0Co1kooUU4M5nzx9s1_exYg.Cwyl417WTqCecJdXTlGYwFRu2WDKadFANvkK16NBzjsg.JPEG.drbaremi%2F2021-04-08_15%253B59%253B53.JPG&type=sc960_832" ,
+       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+    ];
+
+    const buttons = document.querySelectorAll(".word-btn");
+    const leftResult = document.getElementById("left-result");
+    const rightResult = document.getElementById("right-result");
+    const prizeScreen = document.getElementById("prize-screen");
+    const prizeImg = document.getElementById("prize-img");
+    const prizeName = document.getElementById("prize-name");
+    const backBtn = document.getElementById("back-btn");
+
+    let clickCount = 0;
+
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (btn.classList.contains("selected")) return;
+        if (prizes.length === 0) {
+          alert("모든 경품이 소진되었습니다!");
+          return;
+        }
+
+        const randomIndex = Math.floor(Math.random() * prizes.length);
+        const prize = prizes.splice(randomIndex, 1)[0];
+        const resultText = `<p>${btn.textContent} → 🎁 ${prize.name}</p>`;
+
+        if (clickCount % 2 === 0) {
+          leftResult.innerHTML += resultText;
+        } else {
+          rightResult.innerHTML += resultText;
+        }
+        clickCount++;
+
+        btn.classList.add("selected");
+        btn.disabled = true;
+
+        prizeImg.src = prize.img;
+      prizeName.textContent = prize.name;
+      prizeScreen.style.backgroundImage = `url('${prize.bg}')`;
+      prizeScreen.style.backgroundSize = "cover";
+      prizeScreen.style.backgroundPosition = "center";
+      prizeScreen.style.display = "flex";
+      });
+    });
+
+    backBtn.addEventListener("click", () => {
+      prizeScreen.style.display = "none";
+    });
+  </script>
+</body>
+</html>
