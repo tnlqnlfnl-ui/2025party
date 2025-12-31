@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -5,141 +6,229 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>선물 추첨</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-@font-face {
-    font-family: 'Library';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408@1.0/LibraryK.woff2') format('woff2');
-    font-weight: normal;
-    font-display: swap;
-}
+    * { box-sizing: border-box; }
 
-@font-face {
-  font-family: 'SchoolSafetyStarrySky';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimByeolbichhaneulTTF-B.woff2') format('woff2');
-  font-weight: 700;
-  font-display: swap;}
+    /* 웹폰트 */
+    @font-face {
+      font-family: 'Library';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408@1.0/LibraryK.woff2') format('woff2');
+      font-weight: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'SchoolSafetyStarrySky';
+      src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimByeolbichhaneulTTF-B.woff2') format('woff2');
+      font-weight: 700;
+      font-display: swap;
+    }
+
+    :root {
+      --title:   #D85830;            /* 제목 */
+      --card-bg: #FFF5EF;            /* 카드 배경: 기존보다 아주 살짝 옅게 */
+      --card-bd: rgba(224, 124, 99, 0.96); /* 중간 코랄 테두리(글자보다 살짝 덜 진하게) */
+      --num-txt: #B22222;            /* 번호 텍스트: 선명한 레드 */
+      --hover-bg: #FFE8DE;
+      --hover-bd: rgba(224, 124, 99, 0.98);
+      --active-bg: #FFD5C7;
+      --active-bd: #B22222;
+      --focus: #66B3FF;
+      --text-base: #5A4E45;
+    }
+
     body {
-      font-family: "SUIT Light";
+      font-family: "SUIT Light", "Pretendard", "Noto Sans KR", system-ui, sans-serif;
       margin: 0;
       padding: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;  /* 중앙 정렬을 풀고 위에서부터 배치 */
       align-items: center;
-      /* ✅ 메인페이지 배경 이미지 추가 */
       background-image: url("Background2_1.png");
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
     }
 
+    /* 제목: 간격 넓힘 */
+    h1 {
+      font-family: "Pretendard", "Noto Sans KR", "Inter", system-ui, sans-serif;
+      color: var(--title);
+      font-size: 100px;               /* 현 기준 1.5배 느낌 유지 */
+      font-weight: 700;
+      text-align: center;
+      margin: 48px 0 56px;            /* 위 48px, 아래 56px로 박스와 거리 넓힘 */
+      letter-spacing: -0.5px;
+      text-shadow: 0 1px 0 rgba(0,0,0,0.02);
+      user-select: none;
+    }
+
+    /* 카드 그리드: 상단 여유 */
     #word-container {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       grid-template-rows: repeat(2, 1fr);
-      gap: 10px;
+      gap: 14px;                      /* 박스 간격 약간 확대 */
       width: 70%;
       height: 45vh;
+      margin-top: 8px;                /* 제목과 추가 여유 */
     }
 
+    /* 버튼(카드) */
     .word-btn {
-      font-family: 'Library';, sans-serif;
-      color: #d85830; /* ✅ 글자 색상 변경 */
+      font-family: 'Library', sans-serif;    /* ✅ 문법 수정 */
+      color: var(--num-txt);
       font-size: 90px;
-      border: 5px solid #e07c63;
-      border-radius: 8px;
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.08);
-      background-color: #FFF7F0;
+      font-weight: 700;                      /* 번호 가독성 강화 */
+      background-color: var(--card-bg);
+      border: 3px solid var(--card-bd);      /* 5px → 3px로 밸런스 조정 */
+      border-radius: 16px;                   /* 8px → 16px (귀여운 느낌) */
+
+      /* ✅ 내측 + 외측 그림자 (경계 또렷함 + 입체감) */
+      box-shadow:
+        inset 0 0 0 1px rgba(0,0,0,0.06),
+        0 6px 16px rgba(0,0,0,0.12);
+
       cursor: pointer;
-      transition: all 0.2s;
+      transition: background 160ms ease, border-color 160ms ease, transform 120ms ease;
       width: 100%;
       height: 100%;
+
+      display: inline-flex;                 /* 텍스트 중앙정렬 보장 */
+      align-items: center;
+      justify-content: center;
+
+      /* 큰 화면에서 숫자가 더 선명하게 보이도록 라인 높이 조정 */
+      line-height: 1;
     }
 
     .word-btn:hover {
-      background-color: #e0e0e0;
+      background-color: var(--hover-bg);
+      border-color: var(--hover-bd);
+      transform: translateY(-1px);
+    }
+
+    .word-btn:active {
+      background-color: var(--active-bg);
+      border-color: var(--active-bd);
+      transform: translateY(0);
+    }
+
+    .word-btn:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 4px;
     }
 
     .word-btn.selected {
-      background-color: #ccc;
-      color: #666;
+      background-color: #EBD9D2;            /* 선택 후 색상 살짝 어둡게 */
+      color: #8C2A22;
       cursor: not-allowed;
     }
 
+    /* 결과 패널: 제목-박스 아래 충분한 간격 */
     #result {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 16px;                             /* 조금 더 여유 */
       width: 80%;
-      margin-top: 20px;
-      background-color: rgba(255, 255, 255, 0.6);
-      border-radius: 10px;
-      padding: 10px;
+      margin-top: 32px;                      /* 간격 넓힘 */
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 12px;
+      padding: 16px 20px;
+      backdrop-filter: blur(2px);            /* 배경과 자연스럽게 */
     }
 
     .result-column {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      color: var(--text-base);
     }
 
     .result-column p {
-      margin: 5px 0;
+      margin: 6px 0;
       font-size: 18px;
     }
 
+    /* 풀스크린 경품 화면 */
     #prize-screen {
       position: fixed;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100%;
       height: 100%;
-      background-color: #fff;
       display: none;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
       z-index: 10;
+      background-color: #fff; /* bg 이미지가 없을 때 대비 */
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
     }
 
     #prize-screen img {
       width: 35%;
       height: auto;
       object-fit: contain;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      border-radius: 12px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
     }
 
     #prize-name {
       font-size: 28px;
       font-weight: bold;
       margin-bottom: 30px;
+      color: var(--title);
+      text-shadow: 0 1px 0 rgba(0,0,0,0.02);
     }
 
     #back-btn {
       padding: 15px 30px;
       font-size: 18px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       background-color: #007bff;
       color: white;
       cursor: pointer;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
     }
+    #back-btn:hover { background-color: #0056b3; }
 
-    #back-btn:hover {
-      background-color: #0056b3;
+    /* 반응형 조정 */
+    @media (max-width: 1024px) {
+      h1 { font-size: 72px; margin-bottom: 48px; }
+      #word-container { width: 82%; height: 44vh; gap: 12px; }
+      .word-btn { font-size: 72px; border-radius: 14px; }
     }
-
-h1 {
-  font-family: "Pretendard", "Noto Sans KR", "Inter", system-ui, sans-serif;
-  color: #d85830; /* ✅ 글자 색상 변경 */
-  font-size: 100px; /* ✅ 글자 크기 조정 */
-  margin-bottom: 20px;
-}
-
+    @media (max-width: 768px) {
+      h1 { font-size: 56px; margin-bottom: 40px; }
+      #word-container {
+        grid-template-columns: repeat(3, 1fr); /* 3열로 */
+        grid-template-rows: repeat(4, 1fr);
+        width: 90%;
+        height: 55vh;
+        gap: 12px;
+      }
+      .word-btn { font-size: 56px; }
+      #result { width: 90%; margin-top: 28px; }
+      #prize-screen img { width: 60%; }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size: 44px; margin-bottom: 32px; }
+      #word-container {
+        grid-template-columns: repeat(2, 1fr); /* 2열로 */
+        grid-template-rows: repeat(5, 1fr);
+        width: 92%;
+        height: 60vh;
+        gap: 10px;
+      }
+      .word-btn { font-size: 44px; }
+      #result { width: 92%; margin-top: 24px; }
+      #prize-screen img { width: 72%; }
+    }
   </style>
 </head>
 <body>
@@ -171,27 +260,36 @@ h1 {
 
   <script>
     const prizes = [
-      { name: "발렌타인 17년산", 
-        img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20160907_6%2Fkajakajamall_14732544884842GFcj_JPEG%2Ff27c569e16b77820ebccddf01d437722.jpg&type=sc960_832" ,
-       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
-      { name: "키보드+마우스세트", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20250905_242%2F1757037880895MB1Xv_JPEG%2F91170714384164205_71932136.jpg&type=sc960_832",
-       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
-      { name: "키보드+마우스세트", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20250905_242%2F1757037880895MB1Xv_JPEG%2F91170714384164205_71932136.jpg&type=sc960_832" ,
-       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
-      { name: "HAZZYS 머플러(캐시미어)", img: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fthumbnail.coupangcdn.com%2Fthumbnails%2Fremote%2F492x492ex%2Fimage%2Fvendor_inventory%2F0af2%2F44c25b1ef52c9b91199180e8d2a131e45a4236bc91e7da8caeb7c82b5245.jpg&type=sc960_832" ,
-       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
-      { name: "차이슨 헤어드라이기", img: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fthumbnail.coupangcdn.com%2Fthumbnails%2Fremote%2F492x492ex%2Fimage%2Fvendor_inventory%2F18d2%2Fa933c098e9d4880e2111eeda7f3e425632dd60b91786f8ad11d9b03718f8.png&type=sc960_832" ,
-       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
-      { name: "모니터받침대", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20191105_7%2F15729336846896Dc29_JPEG%2F10293519239915906_548408706.jpg&type=sc960_832" ,
-       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
-      { name: "모니터받침대", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20191105_7%2F15729336846896Dc29_JPEG%2F10293519239915906_548408706.jpg&type=sc960_832" ,
-       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
-      { name: "다기능 충전기(3in1)", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20251104_18%2F1762232006253VWjVP_JPEG%2F77240500281315946_1096520776.jpg&type=sc960_832" ,
-       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
-      { name: "다기능 충전기(3in1)", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20251104_18%2F1762232006253VWjVP_JPEG%2F77240500281315946_1096520776.jpg&type=sc960_832" ,
-       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
-      { name: "닥터바르미 경추베개", img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTA0MDhfMjE1%2FMDAxNjE3ODkzOTk1NjE3.X9jhuskgVDdOljS16fwIR0Co1kooUU4M5nzx9s1_exYg.Cwyl417WTqCecJdXTlGYwFRu2WDKadFANvkK16NBzjsg.JPEG.drbaremi%2F2021-04-08_15%253B59%253B53.JPG&type=sc960_832" ,
-       bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "발렌타인 17년산",
+        img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20160907_6%2Fkajakajamall_14732544884842GFcj_JPEG%2Ff27c569e16b77820ebccddf01d437722.jpg&type=sc960_832",
+        bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "키보드+마우스세트",
+        img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20250905_242%2F1757037880895MB1Xv_JPEG%2F91170714384164205_71932136.jpg&type=sc960_832",
+        bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "키보드+마우스세트",
+        img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20250905_242%2F1757037880895MB1Xv_JPEG%2F91170714384164205_71932136.jpg&type=sc960_832",
+        bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "HAZZYS 머플러(캐시미어)",
+        img: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fthumbnail.coupangcdn.com%2Fthumbnails%2Fremote%2F492x492ex%2Fimage%2Fvendor_inventory%2F0af2%2F44c25b1ef52c9b91199180e8d2a131e45a4236bc91e7da8caeb7c82b5245.jpg&type=sc960_832",
+        bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "차이슨 헤어드라이기",
+        img: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fthumbnail.coupangcdn.com%2Fthumbnails%2Fremote%2F492x492ex%2Fimage%2Fvendor_inventory%2F18d2%2Fa933c098e9d4880e2111eeda7f3e425632dd60b91786f8ad11d9b03718f8.png&type=sc960_832",
+        bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "모니터받침대",
+        img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20191105_7%2F15729336846896Dc29_JPEG%2F10293519239915906_548408706.jpg&type=sc960_832",
+        bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "모니터받침대",
+        img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20191105_7%2F15729336846896Dc29_JPEG%2F10293519239915906_548408706.jpg&type=sc960_832",
+        bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "다기능 충전기(3in1)",
+        img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20251104_18%2F1762232006253VWjVP_JPEG%2F77240500281315946_1096520776.jpg&type=sc960_832",
+        bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "다기능 충전기(3in1)",
+        img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fshop1.phinf.naver.net%2F20251104_18%2F1762232006253VWjVP_JPEG%2F77240500281315946_1096520776.jpg&type=sc960_832",
+        bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"},
+      { name: "닥터바르미 경추베개",
+        img: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTA0MDhfMjE1%2FMDAxNjE3ODkzOTk1NjE3.X9jhuskgVDdOljS16fwIR0Co1kooUU4M5nzx9s1_exYg.Cwyl417WTqCecJdXTlGYwFRu2WDKadFANvkK16NBzjsg.JPEG.drbaremi%2F2021-04-08_15%253B59%253B53.JPG&type=sc960_832",
+        bg: "https://img.freepik.com/free-vector/clapping-ok-heart-hands-applause-party-composition-with-set-confetti-stars-human-hand_1284-54729.jpg?semt=ais_hybrid&w=740&q=80"}
     ];
 
     const buttons = document.querySelectorAll(".word-btn");
@@ -227,11 +325,9 @@ h1 {
         btn.disabled = true;
 
         prizeImg.src = prize.img;
-      prizeName.textContent = prize.name;
-      prizeScreen.style.backgroundImage = `url('${prize.bg}')`;
-      prizeScreen.style.backgroundSize = "cover";
-      prizeScreen.style.backgroundPosition = "center";
-      prizeScreen.style.display = "flex";
+        prizeName.textContent = prize.name;
+        prizeScreen.style.backgroundImage = `url('${prize.bg}')`;
+        prizeScreen.style.display = "flex";
       });
     });
 
@@ -240,26 +336,4 @@ h1 {
     });
   </script>
 </body>
-
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</
